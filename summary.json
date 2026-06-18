@@ -1,0 +1,76 @@
+{
+  "generatedAt": "2026-06-18T22:59:15.687Z",
+  "totalCalls": 100,
+  "selfServedCount": 58,
+  "agentTransferCount": 42,
+  "deflectionRate": "58.0%",
+  "sentimentBreakdown": {
+    "Positive": 29,
+    "Neutral": 33,
+    "Negative": 38
+  },
+  "callTypeBreakdown": {
+    "Balance Inquiry": {
+      "total": 15,
+      "selfServed": 11,
+      "agentTransfer": 4
+    },
+    "Loan Information": {
+      "total": 11,
+      "selfServed": 6,
+      "agentTransfer": 5
+    },
+    "Dispute Resolution": {
+      "total": 10,
+      "selfServed": 7,
+      "agentTransfer": 3
+    },
+    "Account Maintenance": {
+      "total": 11,
+      "selfServed": 7,
+      "agentTransfer": 4
+    },
+    "Payment Processing": {
+      "total": 14,
+      "selfServed": 7,
+      "agentTransfer": 7
+    },
+    "Card Services": {
+      "total": 9,
+      "selfServed": 6,
+      "agentTransfer": 3
+    },
+    "Fraud Alert": {
+      "total": 17,
+      "selfServed": 8,
+      "agentTransfer": 9
+    },
+    "General Inquiry": {
+      "total": 13,
+      "selfServed": 6,
+      "agentTransfer": 7
+    }
+  },
+  "topBacklogItems": [
+    {
+      "recommendation": "Implement AI-driven fraud confirmation flow to reduce live agent load.",
+      "frequency": 9
+    },
+    {
+      "recommendation": "Expand IVR payment options to include scheduled payments.",
+      "frequency": 7
+    },
+    {
+      "recommendation": "Build dynamic FAQ bot trained on top 20 member questions.",
+      "frequency": 7
+    },
+    {
+      "recommendation": "Build an AI loan eligibility pre-screener in IVR to deflect 30%+ of calls.",
+      "frequency": 5
+    },
+    {
+      "recommendation": "Add voice-enabled balance confirmation to reduce agent transfers.",
+      "frequency": 4
+    }
+  ]
+}
