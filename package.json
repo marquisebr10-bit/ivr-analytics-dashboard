@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/marquisebr10-bit/ivr-analytics-dashboard#readme",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1"
   }
 }
