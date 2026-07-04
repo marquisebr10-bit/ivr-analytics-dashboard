@@ -26,18 +26,7 @@ const readJSON = (filename) => {
 };
 
 app.get("/", (req, res) => {
-  res.json({
-    status: "online",
-    message: "IVR Analytics API is running",
-    endpoints: [
-      "/api/summary",
-      "/api/calls",
-      "/api/calls/deflected",
-      "/api/calls/transferred",
-      "/api/backlog",
-      "/api/ai-recommendations",
-    ],
-  });
+  res.sendFile(path.join(__dirname, "dashboard.html"));
 });
 
 app.get("/api/summary", (req, res) => {
