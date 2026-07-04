@@ -2,7 +2,7 @@
   "name": "ivr-analytics-dashboard",
   "version": "1.0.0",
   "description": "AI-powered IVR analytics platform for credit union contact center optimization",
-  "main": "generateData.js",
+  "main": "server.js",
 "scripts": {
   "start": "node server.js",
   "generate": "node generateData.js",
