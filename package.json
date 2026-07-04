@@ -1,0 +1,24 @@
+{
+  "name": "ivr-analytics-dashboard",
+  "version": "1.0.0",
+  "description": "AI-powered IVR analytics platform for credit union contact center optimization",
+  "main": "generateData.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marquisebr10-bit/ivr-analytics-dashboard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/marquisebr10-bit/ivr-analytics-dashboard/issues"
+  },
+  "homepage": "https://github.com/marquisebr10-bit/ivr-analytics-dashboard#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
