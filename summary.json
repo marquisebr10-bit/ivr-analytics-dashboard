@@ -1,39 +1,39 @@
 {
-  "generatedAt": "2026-06-18T22:59:15.687Z",
-  "totalCalls": 100,
-  "selfServedCount": 58,
-  "agentTransferCount": 42,
-  "deflectionRate": "58.0%",
+  "generatedAt": "2026-07-05T13:51:00.932Z",
+  "totalCalls": 111,
+  "selfServedCount": 63,
+  "agentTransferCount": 48,
+  "deflectionRate": "56.8%",
   "sentimentBreakdown": {
-    "Positive": 29,
-    "Neutral": 33,
-    "Negative": 38
+    "Positive": 32,
+    "Neutral": 36,
+    "Negative": 43
   },
   "callTypeBreakdown": {
     "Balance Inquiry": {
-      "total": 15,
+      "total": 17,
       "selfServed": 11,
-      "agentTransfer": 4
+      "agentTransfer": 6
     },
     "Loan Information": {
-      "total": 11,
-      "selfServed": 6,
-      "agentTransfer": 5
+      "total": 13,
+      "selfServed": 7,
+      "agentTransfer": 6
     },
     "Dispute Resolution": {
-      "total": 10,
-      "selfServed": 7,
+      "total": 11,
+      "selfServed": 8,
       "agentTransfer": 3
     },
     "Account Maintenance": {
-      "total": 11,
+      "total": 12,
       "selfServed": 7,
-      "agentTransfer": 4
+      "agentTransfer": 5
     },
     "Payment Processing": {
-      "total": 14,
-      "selfServed": 7,
-      "agentTransfer": 7
+      "total": 16,
+      "selfServed": 8,
+      "agentTransfer": 8
     },
     "Card Services": {
       "total": 9,
@@ -41,14 +41,14 @@
       "agentTransfer": 3
     },
     "Fraud Alert": {
-      "total": 17,
-      "selfServed": 8,
+      "total": 18,
+      "selfServed": 9,
       "agentTransfer": 9
     },
     "General Inquiry": {
-      "total": 13,
-      "selfServed": 6,
-      "agentTransfer": 7
+      "total": 15,
+      "selfServed": 7,
+      "agentTransfer": 8
     }
   },
   "topBacklogItems": [
@@ -58,19 +58,19 @@
     },
     {
       "recommendation": "Expand IVR payment options to include scheduled payments.",
-      "frequency": 7
+      "frequency": 8
     },
     {
       "recommendation": "Build dynamic FAQ bot trained on top 20 member questions.",
-      "frequency": 7
-    },
-    {
-      "recommendation": "Build an AI loan eligibility pre-screener in IVR to deflect 30%+ of calls.",
-      "frequency": 5
+      "frequency": 8
     },
     {
       "recommendation": "Add voice-enabled balance confirmation to reduce agent transfers.",
-      "frequency": 4
+      "frequency": 6
+    },
+    {
+      "recommendation": "Build an AI loan eligibility pre-screener in IVR to deflect 30%+ of calls.",
+      "frequency": 6
     }
   ]
 }

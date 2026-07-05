@@ -243,6 +243,7 @@
       border-top: 1px solid #2d3748;
     }
   </style>
+  <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 
@@ -291,6 +292,17 @@
     <div id="backlogList"></div>
   </div>
 
+  <!-- Live Call Feed -->
+  <div class="card" style="margin-bottom: 32px;">
+    <h2>📡 Live Call Feed</h2>
+    <div style="margin-bottom:16px;">
+      <button class="ai-btn" style="background:linear-gradient(135deg,#68d391,#48bb78);" onclick="simulateCall()">
+        📞 Simulate Incoming Call
+      </button>
+    </div>
+    <div id="liveFeed"></div>
+  </div>
+
   <!-- AI Recommendations -->
   <div class="ai-section">
     <button class="ai-btn" id="aiBtn" onclick="getAIRecommendations()">
@@ -308,7 +320,8 @@
 <footer>Built by Marquise Brooks · AI Product Owner · AWS SAA · Node.js · Claude API</footer>
 
 <script>
-  const API = "http://ivr-dashboard-env.eba-gxcgtej2.us-east-1.elasticbeanstalk.com";
+  const API = "http://localhost:3000";
+const socket = io(API);
 
   async function loadDashboard() {
     try {
@@ -396,9 +409,87 @@
       output.style.display = "block";
       output.textContent = "Error fetching AI recommendations. Make sure the server is running.";
     }
+  }
 
-    loading.style.display = "none";
-    btn.disabled = false;
+  // ── Real-Time WebSocket Updates ───────────────────────────────────────────
+  socket.on("connect", () => {
+    console.log("📡 Connected to live dashboard feed");
+    const indicator = document.createElement("div");
+    indicator.id = "liveIndicator";
+    indicator.style.cssText = "position:fixed;top:16px;right:16px;background:#68d391;color:#1a1f2e;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;z-index:999;";
+    indicator.textContent = "● LIVE";
+    document.body.appendChild(indicator);
+  });
+
+  socket.on("summaryUpdate", (data) => {
+    document.getElementById("totalCalls").textContent = data.totalCalls;
+    document.getElementById("deflectionRate").textContent = data.deflectionRate;
+    document.getElementById("selfServed").textContent = data.selfServedCount;
+    document.getElementById("agentTransfers").textContent = data.agentTransferCount;
+
+    const s = data.sentimentBreakdown;
+    document.getElementById("sentimentGrid").innerHTML = `
+      <div class="sentiment-box positive">
+        <div class="s-value">${s.Positive}</div>
+        <div class="s-label">Positive</div>
+      </div>
+      <div class="sentiment-box neutral">
+        <div class="s-value">${s.Neutral}</div>
+        <div class="s-label">Neutral</div>
+      </div>
+      <div class="sentiment-box negative">
+        <div class="s-value">${s.Negative}</div>
+        <div class="s-label">Negative</div>
+      </div>
+    `;
+
+    const maxVal = Math.max(...Object.values(data.callTypeBreakdown).map(v => v.total));
+    document.getElementById("callTypeBars").innerHTML = Object.entries(data.callTypeBreakdown).map(([type, stats]) => `
+      <div class="bar-row">
+        <div class="bar-label">
+          <span>${type}</span>
+          <span>${stats.total} calls</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: ${(stats.total / maxVal) * 100}%"></div>
+        </div>
+      </div>
+    `).join("");
+
+    document.getElementById("backlogList").innerHTML = data.topBacklogItems.map((item, i) => `
+      <div class="backlog-item">
+        <div class="backlog-rank">${i + 1}</div>
+        <div>
+          <div class="backlog-text">${item.recommendation}</div>
+          <div class="backlog-freq">${item.frequency} agent transfers could be deflected</div>
+        </div>
+      </div>
+    `).join("");
+  });
+
+  socket.on("newCall", (call) => {
+    const feed = document.getElementById("liveFeed");
+    if (feed) {
+      const item = document.createElement("div");
+      item.style.cssText = "padding:10px 0;border-bottom:1px solid #2d3748;animation:fadeIn 0.3s ease;";
+      item.innerHTML = `
+        <span style="color:${call.selfServed ? '#68d391' : '#fc8181'};font-weight:700;">
+          ${call.selfServed ? '🤖 AI Resolved' : '👤 Agent Transfer'}
+        </span>
+        <span style="color:#a0aec0;font-size:13px;margin-left:10px;">${call.callType}</span>
+        <span style="color:#718096;font-size:12px;float:right;">${call.callId}</span>
+      `;
+      feed.insertBefore(item, feed.firstChild);
+      if (feed.children.length > 10) feed.removeChild(feed.lastChild);
+    }
+  });
+
+  async function simulateCall() {
+    try {
+      await fetch(`${API}/api/calls/new`, { method: "POST" });
+    } catch (err) {
+      console.error("Failed to simulate call:", err);
+    }
   }
 
   loadDashboard();

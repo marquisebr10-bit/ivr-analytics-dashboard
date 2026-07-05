@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "AI-powered IVR analytics platform for credit union contact center optimization",
   "main": "server.js",
-"scripts": {
-  "start": "node server.js",
-  "generate": "node generateData.js",
-  "test": "echo \"Error: no test specified\" && exit 1"
-},
+  "scripts": {
+    "start": "node server.js",
+    "generate": "node generateData.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marquisebr10-bit/ivr-analytics-dashboard.git"
@@ -23,6 +23,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3"
   }
 }

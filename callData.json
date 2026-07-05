@@ -1098,5 +1098,126 @@
     "sentimentScore": "Neutral",
     "memberSatisfied": true,
     "backlogRecommendation": "Build an AI loan eligibility pre-screener in IVR to deflect 30%+ of calls."
+  },
+  {
+    "callId": "CU-0101",
+    "date": "2026-07-05",
+    "callType": "General Inquiry",
+    "resolution": "AI Self-Service",
+    "selfServed": true,
+    "durationSeconds": 399,
+    "sentimentScore": "Neutral",
+    "memberSatisfied": true,
+    "backlogRecommendation": null
+  },
+  {
+    "callId": "CU-0102",
+    "date": "2026-07-05",
+    "callType": "Balance Inquiry",
+    "resolution": "Agent Transfer",
+    "selfServed": false,
+    "durationSeconds": 155,
+    "sentimentScore": "Negative",
+    "memberSatisfied": false,
+    "backlogRecommendation": "Add voice-enabled balance confirmation to reduce agent transfers."
+  },
+  {
+    "callId": "CU-0103",
+    "date": "2026-07-05",
+    "callType": "Account Maintenance",
+    "resolution": "Agent Transfer",
+    "selfServed": false,
+    "durationSeconds": 219,
+    "sentimentScore": "Negative",
+    "memberSatisfied": false,
+    "backlogRecommendation": "Automate address/email update flows — high self-service potential."
+  },
+  {
+    "callId": "CU-0104",
+    "date": "2026-07-05",
+    "callType": "Fraud Alert",
+    "resolution": "AI Self-Service",
+    "selfServed": true,
+    "durationSeconds": 64,
+    "sentimentScore": "Negative",
+    "memberSatisfied": false,
+    "backlogRecommendation": null
+  },
+  {
+    "callId": "CU-0105",
+    "date": "2026-07-05",
+    "callType": "Loan Information",
+    "resolution": "AI Self-Service",
+    "selfServed": true,
+    "durationSeconds": 215,
+    "sentimentScore": "Negative",
+    "memberSatisfied": false,
+    "backlogRecommendation": null
+  },
+  {
+    "callId": "CU-0106",
+    "date": "2026-07-05",
+    "callType": "General Inquiry",
+    "resolution": "Agent Transfer",
+    "selfServed": false,
+    "durationSeconds": 219,
+    "sentimentScore": "Positive",
+    "memberSatisfied": true,
+    "backlogRecommendation": "Build dynamic FAQ bot trained on top 20 member questions."
+  },
+  {
+    "callId": "CU-0107",
+    "date": "2026-07-05",
+    "callType": "Payment Processing",
+    "resolution": "Agent Transfer",
+    "selfServed": false,
+    "durationSeconds": 84,
+    "sentimentScore": "Neutral",
+    "memberSatisfied": true,
+    "backlogRecommendation": "Expand IVR payment options to include scheduled payments."
+  },
+  {
+    "callId": "CU-0108",
+    "date": "2026-07-05",
+    "callType": "Dispute Resolution",
+    "resolution": "AI Self-Service",
+    "selfServed": true,
+    "durationSeconds": 450,
+    "sentimentScore": "Neutral",
+    "memberSatisfied": true,
+    "backlogRecommendation": null
+  },
+  {
+    "callId": "CU-0109",
+    "date": "2026-07-05",
+    "callType": "Loan Information",
+    "resolution": "Agent Transfer",
+    "selfServed": false,
+    "durationSeconds": 341,
+    "sentimentScore": "Positive",
+    "memberSatisfied": true,
+    "backlogRecommendation": "Build an AI loan eligibility pre-screener in IVR to deflect 30%+ of calls."
+  },
+  {
+    "callId": "CU-0110",
+    "date": "2026-07-05",
+    "callType": "Payment Processing",
+    "resolution": "AI Self-Service",
+    "selfServed": true,
+    "durationSeconds": 166,
+    "sentimentScore": "Positive",
+    "memberSatisfied": true,
+    "backlogRecommendation": null
+  },
+  {
+    "callId": "CU-0111",
+    "date": "2026-07-05",
+    "callType": "Balance Inquiry",
+    "resolution": "Agent Transfer",
+    "selfServed": false,
+    "durationSeconds": 224,
+    "sentimentScore": "Negative",
+    "memberSatisfied": false,
+    "backlogRecommendation": "Add voice-enabled balance confirmation to reduce agent transfers."
   }
 ]

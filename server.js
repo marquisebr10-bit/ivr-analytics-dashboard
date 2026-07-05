@@ -2,6 +2,8 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const Anthropic = require("@anthropic-ai/sdk");
+const http = require("http");
+const { Server } = require("socket.io");
 require("dotenv").config();
 
 const anthropic = new Anthropic({
@@ -9,7 +11,39 @@ const anthropic = new Anthropic({
 });
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*", methods: ["GET", "POST"] }
+});
 const PORT = process.env.PORT || 3000;
+
+// ── WebSocket Connection ───────────────────────────────────────────────────────
+io.on("connection", (socket) => {
+  console.log("📡 Dashboard connected:", socket.id);
+
+  // Send current summary immediately on connect
+  try {
+    const summary = readJSON("summary.json");
+    socket.emit("summaryUpdate", summary);
+  } catch (err) {
+    console.error("Could not send initial summary:", err);
+  }
+
+  socket.on("disconnect", () => {
+    console.log("📡 Dashboard disconnected:", socket.id);
+  });
+});
+
+// ── Helper to broadcast updates to all connected dashboards ──────────────────
+const broadcastUpdate = () => {
+  try {
+    const summary = readJSON("summary.json");
+    io.emit("summaryUpdate", summary);
+    console.log("📡 Broadcasted live update to all dashboards");
+  } catch (err) {
+    console.error("Broadcast failed:", err);
+  }
+};
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -120,8 +154,109 @@ Format your response clearly with headers for each section.`;
     res.status(500).json({ error: "AI recommendation failed", detail: err.message });
   }
 });
+// ── Real-Time: Generate new call and broadcast to all dashboards ──────────────
+app.post("/api/calls/new", (req, res) => {
+  try {
+    const calls = readJSON("callData.json");
+    const summary = readJSON("summary.json");
 
-app.listen(PORT, () => {
+    const CALL_TYPES = [
+      "Balance Inquiry", "Loan Information", "Dispute Resolution",
+      "Account Maintenance", "Payment Processing", "Card Services",
+      "Fraud Alert", "General Inquiry",
+    ];
+
+    const BACKLOG_SUGGESTIONS = {
+      "Balance Inquiry": "Add voice-enabled balance confirmation to reduce agent transfers.",
+      "Loan Information": "Build an AI loan eligibility pre-screener in IVR to deflect 30%+ of calls.",
+      "Dispute Resolution": "Create guided dispute intake flow to collect info before agent handoff.",
+      "Account Maintenance": "Automate address/email update flows — high self-service potential.",
+      "Payment Processing": "Expand IVR payment options to include scheduled payments.",
+      "Card Services": "Add instant card lock/unlock to IVR — members expect self-service here.",
+      "Fraud Alert": "Implement AI-driven fraud confirmation flow to reduce live agent load.",
+      "General Inquiry": "Build dynamic FAQ bot trained on top 20 member questions.",
+    };
+
+    const randomFrom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+    const callType = randomFrom(CALL_TYPES);
+    const resolution = randomFrom(["AI Self-Service", "Agent Transfer"]);
+    const sentiment = randomFrom(["Positive", "Neutral", "Negative"]);
+    const selfServed = resolution === "AI Self-Service";
+
+    const newCall = {
+      callId: `CU-${String(calls.length + 1).padStart(4, "0")}`,
+      date: new Date().toISOString().split("T")[0],
+      callType,
+      resolution,
+      selfServed,
+      durationSeconds: randomInt(30, 480),
+      sentimentScore: sentiment,
+      memberSatisfied: sentiment !== "Negative",
+      backlogRecommendation: selfServed ? null : BACKLOG_SUGGESTIONS[callType],
+    };
+
+    // Add to calls array
+    calls.push(newCall);
+    fs.writeFileSync("callData.json", JSON.stringify(calls, null, 2));
+
+    // Recalculate summary
+    const totalCalls = calls.length;
+    const selfServedCount = calls.filter((c) => c.selfServed).length;
+    const deflectionRate = ((selfServedCount / totalCalls) * 100).toFixed(1);
+
+    const sentimentBreakdown = ["Positive", "Neutral", "Negative"].reduce((acc, s) => {
+      acc[s] = calls.filter((c) => c.sentimentScore === s).length;
+      return acc;
+    }, {});
+
+    const callTypeBreakdown = CALL_TYPES.reduce((acc, t) => {
+      const typeRecords = calls.filter((r) => r.callType === t);
+      acc[t] = {
+        total: typeRecords.length,
+        selfServed: typeRecords.filter((r) => r.selfServed).length,
+        agentTransfer: typeRecords.filter((r) => !r.selfServed).length,
+      };
+      return acc;
+    }, {});
+
+    const topBacklogItems = Object.entries(
+      calls
+        .filter((r) => r.backlogRecommendation)
+        .reduce((acc, r) => {
+          acc[r.backlogRecommendation] = (acc[r.backlogRecommendation] || 0) + 1;
+          return acc;
+        }, {})
+    )
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([recommendation, frequency]) => ({ recommendation, frequency }));
+
+    const newSummary = {
+      generatedAt: new Date().toISOString(),
+      totalCalls,
+      selfServedCount,
+      agentTransferCount: totalCalls - selfServedCount,
+      deflectionRate: `${deflectionRate}%`,
+      sentimentBreakdown,
+      callTypeBreakdown,
+      topBacklogItems,
+    };
+
+    fs.writeFileSync("summary.json", JSON.stringify(newSummary, null, 2));
+
+    // Broadcast live update to all connected dashboards
+    io.emit("summaryUpdate", newSummary);
+    io.emit("newCall", newCall);
+
+    res.json({ success: true, newCall, summary: newSummary });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to generate new call" });
+  }
+});
+server.listen(PORT, () => {
   console.log(`✅ IVR Analytics API running at http://localhost:${PORT}`);
   console.log(`📊 Summary:         http://localhost:${PORT}/api/summary`);
   console.log(`📞 All Calls:       http://localhost:${PORT}/api/calls`);
