@@ -256,6 +256,53 @@ app.post("/api/calls/new", (req, res) => {
     res.status(500).json({ error: "Failed to generate new call" });
   }
 });
+// 8. AI Chat Interface — ask questions about your IVR data
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message, history } = req.body;
+    const summary = readJSON("summary.json");
+    const calls = readJSON("callData.json");
+
+    const systemPrompt = `You are an expert IVR analytics assistant for a credit union contact center. 
+You have access to the following real-time IVR performance data:
+
+Total Calls: ${summary.totalCalls}
+Deflection Rate: ${summary.deflectionRate}
+AI Self-Served: ${summary.selfServedCount}
+Agent Transfers: ${summary.agentTransferCount}
+Sentiment Breakdown: ${JSON.stringify(summary.sentimentBreakdown)}
+Call Type Breakdown: ${JSON.stringify(summary.callTypeBreakdown)}
+Top Backlog Items: ${JSON.stringify(summary.topBacklogItems)}
+
+Answer questions about this data concisely and professionally. 
+Provide specific numbers and actionable recommendations when possible.
+Keep responses under 150 words unless asked for detail.`;
+
+    const messages = [
+      ...(history || []),
+      { role: "user", content: message }
+    ];
+
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages,
+    });
+
+    res.json({
+      reply: response.content[0].text,
+      history: [
+        ...(history || []),
+        { role: "user", content: message },
+        { role: "assistant", content: response.content[0].text }
+      ]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Chat failed", detail: err.message });
+  }
+});
 server.listen(PORT, () => {
   console.log(`✅ IVR Analytics API running at http://localhost:${PORT}`);
   console.log(`📊 Summary:         http://localhost:${PORT}/api/summary`);

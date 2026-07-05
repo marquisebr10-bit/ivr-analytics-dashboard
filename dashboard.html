@@ -303,6 +303,23 @@
     <div id="liveFeed"></div>
   </div>
 
+<!-- AI Chat Interface -->
+  <div class="card" style="margin-bottom: 32px;">
+    <h2>💬 Ask Your IVR Data</h2>
+    <div id="chatMessages" style="min-height:100px;max-height:400px;overflow-y:auto;margin-bottom:16px;"></div>
+    <div style="display:flex;gap:10px;">
+      <input 
+        id="chatInput" 
+        type="text" 
+        placeholder="Ask a question about your IVR data..." 
+        style="flex:1;background:#0f1117;border:1px solid #2d3748;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;"
+        onkeypress="if(event.key==='Enter') sendChat()"
+      />
+      <button class="ai-btn" onclick="sendChat()" style="padding:12px 24px;">
+        Send
+      </button>
+    </div>
+  </div>
   <!-- AI Recommendations -->
   <div class="ai-section">
     <button class="ai-btn" id="aiBtn" onclick="getAIRecommendations()">
@@ -320,7 +337,7 @@
 <footer>Built by Marquise Brooks · AI Product Owner · AWS SAA · Node.js · Claude API</footer>
 
 <script>
-  const API = "http://ivr-dashboard-env.eba-gxcgtej2.us-east-1.elasticbeanstalk.com";
+  const API = "http://localhost:3000";
 const socket = io(API);
 
   async function loadDashboard() {
@@ -492,7 +509,73 @@ const socket = io(API);
     }
   }
 
-  loadDashboard();
+// ── AI Chat Interface ─────────────────────────────────────────────────────
+  let chatHistory = [];
+
+  async function sendChat() {
+    const input = document.getElementById("chatInput");
+    const messages = document.getElementById("chatMessages");
+    const message = input.value.trim();
+    if (!message) return;
+
+    // Show user message
+    messages.innerHTML += `
+      <div style="margin-bottom:12px;text-align:right;">
+        <span style="background:#2d3748;color:#e2e8f0;padding:8px 14px;border-radius:12px 12px 2px 12px;font-size:14px;display:inline-block;max-width:80%;">
+          ${message}
+        </span>
+      </div>
+    `;
+
+    input.value = "";
+    messages.scrollTop = messages.scrollHeight;
+
+    // Show typing indicator
+    const typingId = `typing-${Date.now()}`;
+    messages.innerHTML += `
+      <div id="${typingId}" style="margin-bottom:12px;">
+        <span style="background:#1a1f2e;border:1px solid #2d3748;color:#718096;padding:8px 14px;border-radius:12px 12px 12px 2px;font-size:14px;display:inline-block;">
+          Claude is thinking...
+        </span>
+      </div>
+    `;
+    messages.scrollTop = messages.scrollHeight;
+
+    try {
+      const res = await fetch(`${API}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, history: chatHistory })
+      });
+      const data = await res.json();
+
+      // Remove typing indicator
+      document.getElementById(typingId)?.remove();
+
+      // Show Claude response
+      messages.innerHTML += `
+        <div style="margin-bottom:12px;">
+          <span style="background:#1a1f2e;border:1px solid #2d3748;color:#cbd5e0;padding:8px 14px;border-radius:12px 12px 12px 2px;font-size:14px;display:inline-block;max-width:80%;line-height:1.6;">
+            🧠 ${data.reply.replace(/\n/g, "<br>")}
+          </span>
+        </div>
+      `;
+
+      chatHistory = data.history;
+      messages.scrollTop = messages.scrollHeight;
+
+    } catch (err) {
+      document.getElementById(typingId)?.remove();
+      messages.innerHTML += `
+        <div style="margin-bottom:12px;">
+          <span style="background:#1a1f2e;border:1px solid #fc8181;color:#fc8181;padding:8px 14px;border-radius:12px;font-size:14px;display:inline-block;">
+            ❌ Failed to get response. Check server connection.
+          </span>
+        </div>
+      `;
+    }
+  }
+loadDashboard();
 </script>
 </body>
 </html>
